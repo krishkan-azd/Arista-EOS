@@ -1,0 +1,55 @@
+hostname T1-1
+!
+interface Management1
+ description ZTP_Mgmt_Interface
+ ip address 172.16.2.111/24
+!
+ip routing
+username admin role network-admin privilege 15 secret Avsnetwork123!
+!
+int Et6
+ desc T0-1
+ ip add 10.0.1.10/31
+ no switchport
+ mtu 9214
+!
+int Et7
+ desc T0-2
+ ip add 10.0.1.12/31
+ no switchport
+ mtu 9214
+!
+int Et8
+ desc T0-3
+ ip add 10.0.1.14/31
+ no switchport
+ mtu 9214
+!
+int Et9
+ desc T0-4
+ ip add 10.0.1.16/31
+ no switchport
+ mtu 9214
+!
+interface loopback0
+ ip add 10.0.250.1/32
+!
+router bgp 65000
+ router-id 10.0.250.1
+ no bgp default ipv4-unicast
+ bgp log-neighbor-changes
+ distance bgp 20 200 200
+!
+ neighbor 10.0.1.11 remote-as 65001
+ neighbor 10.0.1.13 remote-as 65002
+ neighbor 10.0.1.15 remote-as 65003
+ neighbor 10.0.1.17 remote-as 65004
+ address-family ipv4
+  neighbor 10.0.1.11 activate
+  neighbor 10.0.1.13 activate
+  neighbor 10.0.1.15 activate
+  neighbor 10.0.1.17 activate
+  network 10.0.250.1/32
+  maximum-paths 4 ecmp 64
+!
+end

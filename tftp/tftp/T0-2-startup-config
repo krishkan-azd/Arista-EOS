@@ -1,0 +1,68 @@
+hostname T0-2
+!
+interface Management1
+ description ZTP_Mgmt_Interface
+ ip address 172.16.2.102/24
+!
+ip routing
+username admin role network-admin privilege 15 secret Avsnetwork123!
+!
+int Et1
+ description T1-1
+ no switchport
+ ip add 10.0.1.13/31
+ mtu 9214
+!
+int Et2
+ description T1-2
+ no switchport
+ ip add 10.0.2.13/31
+ mtu 9214
+!
+interface loopback0
+ ip add 10.0.250.12/32
+!
+int loop1
+ ip add 10.0.255.12/32
+!
+router bgp 65002
+ router-id 10.0.250.12
+ no bgp default ipv4-unicast
+ bgp log-neighbor-changes
+ distance bgp 20 200 200
+!
+ neighbor underlay peer group
+ neighbor underlay remote-as 65000
+ neighbor underlay maximum-routes 12000 warning-only
+ neighbor 10.0.1.12 peer group underlay
+ neighbor 10.0.2.12 peer group underlay
+ neighbor evpn peer group
+ neighbor evpn update-source Loopback0
+ neighbor evpn ebgp-multihop 3
+ neighbor evpn send-community extended
+ neighbor evpn maximum-routes 12000 warning-only
+ neighbor 10.0.250.11 peer group evpn
+ neighbor 10.0.250.11 remote-as 65001
+ neighbor 10.0.250.13 peer group evpn
+ neighbor 10.0.250.13 remote-as 65003
+ neighbor 10.0.250.14 peer group evpn
+ neighbor 10.0.250.14 remote-as 65004
+ !
+ address-family evpn
+  neighbor evpn activate
+ !
+ address-family ipv4
+  neighbor underlay activate
+  network 10.0.250.12/32
+  network 10.0.255.12/32
+  maximum-paths 4 ecmp 64
+!
+service routing protocols model multi-agent
+hardware tcam profile vxlan-routing 
+!
+int vxlan1
+  vxlan source-int lo1
+  vxlan udp-port 4789
+  vxlan learn-restrict any
+!
+end

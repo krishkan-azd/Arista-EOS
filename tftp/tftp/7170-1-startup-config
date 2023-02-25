@@ -1,0 +1,13 @@
+hostname 7170-1
+
+!
+
+interface Management1
+
+ description ZTP_Mgmt_Interface
+
+ ip address 172.16.2.100/24
+
+!
+
+end
