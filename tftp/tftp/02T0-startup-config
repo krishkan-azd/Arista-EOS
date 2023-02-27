@@ -14,15 +14,13 @@ vlan 1001
 interface loopback0
  ip add 10.16.0.12/32
 !
-ip unnumbered loopback 0
-!
-int Et1
+interface Ethernet1
  description Node1-eth1
  no switchport
  ip address unnumbered loopback0
  mtu 9214
 !
-int Et5-8
+interface Ethernet5-8
  description T1s-Eth6
  no switchport
  ip address unnumbered loopback0
@@ -41,6 +39,7 @@ router bgp 64612
  neighbor NODES maximum-routes 100 warning-only
  neighbor NODES rib-in pre-policy retain all
  neighbor NODES send-community
+ neighbor NODES ebgp-multihop 2
  neighbor 10.16.255.1 peer group NODES
  neighbor 10.16.255.1 update-source Loopback0
  neighbor 10.16.255.2 peer group NODES
@@ -51,6 +50,7 @@ router bgp 64612
  neighbor T1SET maximum-routes 100 warning-only
  neighbor T1SET rib-in pre-policy retain all
  neighbor T1SET send-community
+ neighbor T1SET ebgp-multihop 2
  neighbor 10.16.1.11 peer group T1SET
  neighbor 10.16.1.11 remote-as 64615
  neighbor 10.16.1.11 update-source Loopback0
