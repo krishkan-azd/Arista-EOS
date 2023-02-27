@@ -1,0 +1,5 @@
+#!/usr/bin/Cli -p2
+
+enable
+
+copy tftp://172.16.2.254/02T2-startup-config flash:startup-config

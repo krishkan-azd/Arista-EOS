@@ -1,0 +1,76 @@
+hostname 01T0
+!
+interface Management1
+ description ZTP_Mgmt_Interface
+ ip address 172.16.2.24/24
+!
+ip routing
+username admin role network-admin privilege 15 secret Avsnetwork123!
+!
+!
+interface loopback0
+ ip add 10.16.1.14/32
+!
+ip unnumbered loopback 0
+!
+int range Et1-4
+ description T2SET-Et8
+ no switchport
+ ip unnumbered loopback 0
+ mtu 9214
+!
+int range Et5-6
+ description T0SET-Eth8
+ no switchport
+ ip unnumbered loopback 0
+ mtu 9214
+!
+!
+router bgp 64616
+ router-id 10.16.1.14
+ no bgp default ipv4-unicast
+ bgp log-neighbor-changes
+ distance bgp 20 200 200
+ maximum-paths 128
+!
+!
+ neighbor T0SET peer group
+ neighbor T0SET bfd
+ neighbor T0SET maximum-routes 100 warning-only
+ neighbor T0SET rib-in pre-policy retain all
+ neighbor T0SET send-community
+ neighbor 10.16.0.11 peer group T0SET
+ neighbor 10.16.0.11 remote-as 64611
+ neighbor 10.16.0.11 update-source Loopback0
+ neighbor 10.16.0.12 peer group T0SET
+ neighbor 10.16.0.12 remote-as 64612
+ neighbor 10.16.0.12 update-source Loopback0
+ !
+ neighbor T2SET peer group
+ neighbor T2SET bfd
+ neighbor T2SET maximum-routes 100 warning-only
+ neighbor T2SET rib-in pre-policy retain all
+ neighbor T2SET send-community
+ neighbor 10.16.2.11 peer group T1SET
+ neighbor 10.16.2.11 remote-as 64615
+ neighbor 10.16.2.11 update-source Loopback0
+ neighbor 10.16.2.12 peer group T1SET
+ neighbor 10.16.2.12 remote-as 64616
+ neighbor 10.16.2.12 update-source Loopback0
+ neighbor 10.16.2.13 peer group T1SET
+ neighbor 10.16.2.13 remote-as 64617
+ neighbor 10.16.2.13 update-source Loopback0
+ neighbor 10.16.2.14 peer group T1SET
+ neighbor 10.16.2.14 remote-as 64618
+ neighbor 10.16.2.14 update-source Loopback0
+ !
+ address-family ipv4
+  neighbor T0SET activate
+  neighbor T2SET activate
+  network 10.16.1.14/32
+  maximum-paths 4 ecmp 64
+!
+service routing protocols model multi-agent
+hardware tcam profile vxlan-routing 
+!
+end
