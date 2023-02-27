@@ -8,20 +8,62 @@ ip routing
 username admin role network-admin privilege 15 secret Avsnetwork123!
 !
 !
-interface loopback0
- ip add 10.16.1.14/32
-!
-interface Ethernet1-4
+interface Ethernet1
  description T2SET-Et8
  no switchport
- ip address unnumbered loopback 0
+ ip address unnumbered loopback0
+ ip ospf network point-to-point
+ ip ospf area 0.0.0.0
  mtu 9214
 !
-interface Ethernet5-6
+interface Ethernet2
+ description T2SET-Et8
+ no switchport
+ ip address unnumbered loopback0
+ ip ospf network point-to-point
+ ip ospf area 0.0.0.0
+ mtu 9214
+!
+interface Ethernet3
+ description T2SET-Et8
+ no switchport
+ ip address unnumbered loopback0
+ ip ospf network point-to-point
+ ip ospf area 0.0.0.0
+ mtu 9214
+!
+interface Ethernet4
+ description T2SET-Et8
+ no switchport
+ ip address unnumbered loopback0
+ ip ospf network point-to-point
+ ip ospf area 0.0.0.0
+ mtu 9214
+!
+interface Ethernet5
  description T0SET-Eth8
  no switchport
- ip address unnumbered loopback 0
+ ip address unnumbered loopback0
+ ip ospf network point-to-point
+ ip ospf area 0.0.0.0
  mtu 9214
+!
+interface Ethernet6
+ description T0SET-Eth8
+ no switchport
+ ip address unnumbered loopback0
+ ip ospf network point-to-point
+ ip ospf area 0.0.0.0
+ mtu 9214
+!
+!
+interface loopback0
+ ip add 10.16.1.14/32
+ ip ospf area 0.0.0.0
+!
+router ospf 1
+ router-id 10.16.1.14
+ max-lsa 12000
 !
 !
 router bgp 64618
@@ -37,7 +79,7 @@ router bgp 64618
  neighbor T0SET maximum-routes 100 warning-only
  neighbor T0SET rib-in pre-policy retain all
  neighbor T0SET send-community
- neighbor T0SET ebgp-multihop 2
+ neighbor T0SET ebgp-multihop 255
  neighbor 10.16.0.11 peer group T0SET
  neighbor 10.16.0.11 remote-as 64611
  neighbor 10.16.0.11 update-source Loopback0
@@ -51,7 +93,7 @@ router bgp 64618
  neighbor T2SET maximum-routes 100 warning-only
  neighbor T2SET rib-in pre-policy retain all
  neighbor T2SET send-community
- neighbor T2SET ebgp-multihop 2
+ neighbor T2SET ebgp-multihop 255
  neighbor 10.16.2.11 peer group T1SET
  neighbor 10.16.2.11 update-source Loopback0
  neighbor 10.16.2.12 peer group T1SET
