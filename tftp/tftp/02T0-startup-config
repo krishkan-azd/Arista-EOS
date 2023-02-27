@@ -1,0 +1,81 @@
+hostname 02T0
+!
+interface Management1
+ description ZTP_Mgmt_Interface
+ ip address 172.16.2.12/24
+!
+ip routing
+username admin role network-admin privilege 15 secret Avsnetwork123!
+!
+vlan 1001
+   name NODES_VLAN1001
+!
+!
+interface loopback0
+ ip add 10.16.0.12/32
+!
+ip unnumbered loopback 0
+!
+int Et1
+ description Node1-eth1
+ no switchport
+ ip unnumbered loopback 0
+ mtu 9214
+!
+int range Et5-8
+ description T1s-Eth6
+ no switchport
+ ip unnumbered loopback 0
+ mtu 9214
+!
+!
+router bgp 64612
+ router-id 10.16.0.12
+ no bgp default ipv4-unicast
+ bgp log-neighbor-changes
+ distance bgp 20 200 200
+ maximum-paths 128
+!
+ neighbor NODES peer group
+ neighbor NODES remote-as 65500
+ neighbor NODES maximum-routes 100 warning-only
+ neighbor NODES rib-in pre-policy retain all
+ neighbor NODES send-community
+ neighbor 10.16.255.1 peer group NODES
+ neighbor 10.16.255.1 update-source Loopback0
+ neighbor 10.16.255.2 peer group NODES
+ neighbor 10.16.255.2 update-source Loopback0
+ !
+ neighbor T1SET peer group
+ neighbor T1SET bfd
+ neighbor T1SET maximum-routes 100 warning-only
+ neighbor T1SET rib-in pre-policy retain all
+ neighbor T1SET send-community
+ neighbor 10.16.1.11 peer group T1SET
+ neighbor 10.16.1.11 remote-as 64615
+ neighbor 10.16.1.11 update-source Loopback0
+ neighbor 10.16.1.12 peer group T1SET
+ neighbor 10.16.1.12 remote-as 64616
+ neighbor 10.16.1.12 update-source Loopback0
+ neighbor 10.16.1.13 peer group T1SET
+ neighbor 10.16.1.13 remote-as 64617
+ neighbor 10.16.1.13 update-source Loopback0
+ neighbor 10.16.1.14 peer group T1SET
+ neighbor 10.16.1.14 remote-as 64618
+ neighbor 10.16.1.14 update-source Loopback0
+ !
+ vlan 1001
+      rd 10.16.0.12:1001
+      route-target both 64612:1001
+      redistribute learned
+   !
+ address-family ipv4
+  neighbor NODES activate
+  neighbor T1SET activate
+  network 10.16.0.12/32
+  maximum-paths 4 ecmp 64
+!
+service routing protocols model multi-agent
+hardware tcam profile vxlan-routing 
+!
+end
