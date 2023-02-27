@@ -1,50 +1,49 @@
-hostname 01T0
+hostname 01T2
 !
 interface Management1
  description ZTP_Mgmt_Interface
- ip address 172.16.2.11/24
+ ip address 172.16.2.31/24
 !
 ip routing
 username admin role network-admin privilege 15 secret Avsnetwork123!
 !
-vlan 1001
-   name NODES_VLAN1001
-!
 !
 interface loopback0
- ip add 10.16.0.11/32
+ ip add 10.16.2.11/32
 !
 ip unnumbered loopback 0
 !
-int Et1
- description Node1-eth0
+int Et1-2
+ description T3SET-Et1
  no switchport
- ip address unnumbered loopback 0
+ ip address unnumbered loopback0
  mtu 9214
 !
 int Et5-8
- description T1s-Eth5
+ description T1SET-Eth1
  no switchport
- ip address unnumbered loopback 0
+ ip address unnumbered loopback0
  mtu 9214
 !
 !
-router bgp 64611
- router-id 10.16.0.11
+router bgp 64615
+ router-id 10.16.2.11
  no bgp default ipv4-unicast
  bgp log-neighbor-changes
  distance bgp 20 200 200
  maximum-paths 128
 !
- neighbor NODES peer group
- neighbor NODES remote-as 65500
- neighbor NODES maximum-routes 100 warning-only
- neighbor NODES rib-in pre-policy retain all
- neighbor NODES send-community
- neighbor 10.16.255.1 peer group NODES
- neighbor 10.16.255.1 update-source Loopback0
- neighbor 10.16.255.2 peer group NODES
- neighbor 10.16.255.2 update-source Loopback0
+!
+ neighbor T3SET peer group
+ neighbor T3SET remote-as 65200
+ neighbor T3SET bfd
+ neighbor T3SET maximum-routes 100 warning-only
+ neighbor T3SET rib-in pre-policy retain all
+ neighbor T3SET send-community
+ neighbor 10.16.3.11 peer group T3SET
+ neighbor 10.16.3.11 update-source Loopback0
+ neighbor 10.16.3.12 peer group T3SET
+ neighbor 10.16.3.12 update-source Loopback0
  !
  neighbor T1SET peer group
  neighbor T1SET bfd
@@ -66,19 +65,14 @@ router bgp 64611
  !
  redistribute connected
  !
- vlan 1001
-      rd 10.16.0.11:1001
-      route-target both 64611:1001
-      redistribute learned
-   !
  address-family ipv4
-  neighbor NODES activate
   neighbor T1SET activate
+  neighbor T3SET activate
   maximum-paths 4 ecmp 64
 !
 service routing protocols model multi-agent
 hardware tcam profile vxlan-routing 
 !
 copy run start
-wr 
+wr
 end

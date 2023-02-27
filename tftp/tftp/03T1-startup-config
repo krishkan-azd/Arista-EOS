@@ -1,4 +1,4 @@
-hostname 01T0
+hostname 03T1
 !
 interface Management1
  description ZTP_Mgmt_Interface
@@ -13,20 +13,20 @@ interface loopback0
 !
 ip unnumbered loopback 0
 !
-int range Et1-4
+int Et1-4
  description T2SET-Et7
  no switchport
- ip unnumbered loopback 0
+ ip address unnumbered loopback 0
  mtu 9214
 !
-int range Et5-6
+int Et5-6
  description T0SET-Eth7
  no switchport
- ip unnumbered loopback 0
+ ip address unnumbered loopback 0
  mtu 9214
 !
 !
-router bgp 64616
+router bgp 64617
  router-id 10.16.1.13
  no bgp default ipv4-unicast
  bgp log-neighbor-changes
@@ -47,30 +47,30 @@ router bgp 64616
  neighbor 10.16.0.12 update-source Loopback0
  !
  neighbor T2SET peer group
+ neighbor T2SET remote-as 65111
  neighbor T2SET bfd
  neighbor T2SET maximum-routes 100 warning-only
  neighbor T2SET rib-in pre-policy retain all
  neighbor T2SET send-community
- neighbor 10.16.2.11 peer group T1SET
- neighbor 10.16.2.11 remote-as 64615
+ neighbor 10.16.2.11 peer group T2SET
  neighbor 10.16.2.11 update-source Loopback0
- neighbor 10.16.2.12 peer group T1SET
- neighbor 10.16.2.12 remote-as 64616
+ neighbor 10.16.2.12 peer group T2SET
  neighbor 10.16.2.12 update-source Loopback0
- neighbor 10.16.2.13 peer group T1SET
- neighbor 10.16.2.13 remote-as 64617
+ neighbor 10.16.2.13 peer group T2SET
  neighbor 10.16.2.13 update-source Loopback0
- neighbor 10.16.2.14 peer group T1SET
- neighbor 10.16.2.14 remote-as 64618
+ neighbor 10.16.2.14 peer group T2SET
  neighbor 10.16.2.14 update-source Loopback0
+ !
+ redistribute connected
  !
  address-family ipv4
   neighbor T0SET activate
   neighbor T2SET activate
-  network 10.16.1.13/32
   maximum-paths 4 ecmp 64
 !
 service routing protocols model multi-agent
 hardware tcam profile vxlan-routing 
 !
+copy run start
+wr
 end

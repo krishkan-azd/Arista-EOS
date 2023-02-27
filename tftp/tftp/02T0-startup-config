@@ -19,13 +19,13 @@ ip unnumbered loopback 0
 int Et1
  description Node1-eth1
  no switchport
- ip unnumbered loopback 0
+ ip address unnumbered loopback0
  mtu 9214
 !
-int range Et5-8
+int Et5-8
  description T1s-Eth6
  no switchport
- ip unnumbered loopback 0
+ ip address unnumbered loopback0
  mtu 9214
 !
 !
@@ -64,6 +64,8 @@ router bgp 64612
  neighbor 10.16.1.14 remote-as 64618
  neighbor 10.16.1.14 update-source Loopback0
  !
+ redistribute connected
+ !
  vlan 1001
       rd 10.16.0.12:1001
       route-target both 64612:1001
@@ -72,10 +74,11 @@ router bgp 64612
  address-family ipv4
   neighbor NODES activate
   neighbor T1SET activate
-  network 10.16.0.12/32
   maximum-paths 4 ecmp 64
 !
 service routing protocols model multi-agent
 hardware tcam profile vxlan-routing 
 !
+copy run start
+wr
 end
