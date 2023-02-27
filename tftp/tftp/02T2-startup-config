@@ -1,15 +1,15 @@
-hostname 01T2
+hostname 02T2
 !
 interface Management1
  description ZTP_Mgmt_Interface
- ip address 172.16.2.31/24
+ ip address 172.16.2.32/24
 !
 ip routing
 username admin role network-admin privilege 15 secret Avsnetwork123!
 !
 !
 interface Ethernet1
- description T3SET-Et1
+ description T3SET-Et2
  no switchport
  ip address unnumbered loopback 0
  ip ospf network point-to-point
@@ -18,7 +18,7 @@ interface Ethernet1
 !
 !
 interface Ethernet2
- description T3SET-Et1
+ description T3SET-Et2
  no switchport
  ip address unnumbered loopback 0
  ip ospf network point-to-point
@@ -26,7 +26,7 @@ interface Ethernet2
  mtu 9214
 !
 interface Ethernet5
- description T1s-Eth1
+ description T1s-Eth2
  no switchport
  ip address unnumbered loopback 0
  ip ospf network point-to-point
@@ -34,7 +34,7 @@ interface Ethernet5
  mtu 9214
 !
 interface Ethernet6
- description T1s-Eth1
+ description T1s-Eth2
  no switchport
  ip address unnumbered loopback 0
  ip ospf network point-to-point
@@ -42,7 +42,7 @@ interface Ethernet6
  mtu 9214
 !
 interface Ethernet7
- description T1s-Eth1
+ description T1s-Eth2
  no switchport
  ip address unnumbered loopback 0
  ip ospf network point-to-point
@@ -50,7 +50,7 @@ interface Ethernet7
  mtu 9214
 !
 interface Ethernet8
- description T1s-Eth1
+ description T1s-Eth2
  no switchport
  ip address unnumbered loopback 0
  ip ospf network point-to-point
@@ -59,16 +59,16 @@ interface Ethernet8
 !
 !
 interface loopback0
- ip add 10.16.2.11/32
+ ip add 10.16.2.12/32
  ip ospf area 0.0.0.0
 !
 router ospf 1
- router-id 10.16.2.11
+ router-id 10.16.2.12
  max-lsa 12000
 !
 !
 router bgp 65111
- router-id 10.16.2.11
+ router-id 10.16.2.12
  no bgp default ipv4-unicast
  bgp log-neighbor-changes
  distance bgp 20 200 200
@@ -81,7 +81,7 @@ router bgp 65111
  neighbor T3SET maximum-routes 100 warning-only
  neighbor T3SET rib-in pre-policy retain all
  neighbor T3SET send-community
- neighbor T3SET ebgp-multihop 2
+ neighbor T3SET ebgp-multihop 255
  neighbor 10.16.3.11 peer group T3SET
  neighbor 10.16.3.11 update-source Loopback0
  neighbor 10.16.3.12 peer group T3SET
@@ -92,7 +92,7 @@ router bgp 65111
  neighbor T1SET maximum-routes 100 warning-only
  neighbor T1SET rib-in pre-policy retain all
  neighbor T1SET send-community
- neighbor T1SET ebgp-multihop 2
+ neighbor T1SET ebgp-multihop 255
  neighbor 10.16.1.11 peer group T1SET
  neighbor 10.16.1.11 remote-as 64615
  neighbor 10.16.1.11 update-source Loopback0
